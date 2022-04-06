@@ -1,5 +1,4 @@
 from mimetypes import init
-import win32com.client
 
 from email import message
 import smtplib
@@ -73,7 +72,7 @@ class Application():
     print(self.data)
     self.window_confirm = tkinter.Toplevel(self.root)
     self.window_confirm.title(u"送信内容")
-    self.window_confirm.geometry("500x500")
+    self.window_confirm.geometry("500x600")
     
     # モーダルにする設定
     self.window_confirm.grab_set()        # モーダルにする
@@ -81,15 +80,27 @@ class Application():
     
     lbl_subject = tkinter.Label(self.window_confirm, text='件名：{}'.format(self.data['subject']), padx=10, pady=10, wraplength=400, anchor='w', justify='left')
     lbl_subject.grid(row=0, column=0, columnspan=2)
-    
-    lbl_content = tkinter.Label(self.window_confirm, text= output, padx=10, pady=10, wraplength=400, justify='left')
-    lbl_content.grid(row=1, column=0, columnspan=2)
+    """
+    frame1 = tkinter.Frame(self.window_confirm)
+    frame1.pack()
+    txt_content = tkinter.Text(frame1, padx=10, pady=10, width=100)
+    txt_content.grid(row=1, column=0, columnspan=2)
+    txt_content.insert(output)
+
+    scroll = tkinter.Scrollbar(frame1, orient=tkinter.VERTICAL, command=txt_content.yview)
+    scroll.pack(side=tkinter.RIGHT, fill="y")
+
+    #動きをスクロールバーに反映
+    txt_content["yscrollcommand"] = scroll.set
+    """
     
     button_cancel = tkinter.Button(self.window_confirm, text=u'キャンセル', command=self.window_confirm.destroy) 
     button_cancel.grid(row=5, column=1, pady=20)
     
     button_send = tkinter.Button(self.window_confirm, text=u'送信', command=self.SendMail) 
     button_send.grid(row=5, column=0, pady=20)
+
+    print(output)
     
   def SendMail(self):
     self.mail.SendMail()
@@ -117,11 +128,45 @@ class AutoMail():
   def Get_to(self):
     self.to_email =  self.csv_input['メールアドレス']
     self.name = self.csv_input['名前']
-    self.number = self.csv_input['学籍番号']
+    self.number = self.csv_input['ID']
     self.pswd = self.csv_input['パスワード']
     
   def CreateContent(self, i):
-    return f'{self.name[i]}さん\n 数理計画法実習のTAを担当させてもらいます．林田と申します．数理計画法の提出サイトののパスワードをお伝えします．\n パスワード：{self.pswd[i]}'
+    return f'''{self.name[i]}さん，はじめまして．\n
+数理計画法実習のTAを担当します，林田です．\n
+\n
+4月11日からの授業開始に伴い，課題の提出ページについての案内とセットアップについて連絡します．\n
+\n
+・課題の提出ページについて
+【数理計画法実習 講義ページ】
+https://ist.ksc.kwansei.ac.jp/~miwa/mathprog/index.html
+
+上のURLから課題の提出ページにログインできます．
+授業中に課題が出るので，原則こちらから提出お願いします．
+
+
+・セットアップについて
+初回授業の前日までにセットアップとして以下の3つの項目を済ませておいてください．
+
+1. ログイン
+以下のIDとパスワードで各個人の課題提出ページにログインしてください．
+
+ID : 学生番号の下4桁
+PW: {self.pswd[i]}
+※ ログイン後は必ず，学籍番号と氏名が自分のものであるか確認してください．
+
+2.パスワードの変更
+課題提出ページの"パスワード変更"から新しいパスワードに変更してください．
+※ 初期パスワードのままにしないようにお願いします．
+
+3.課題提出のテスト
+課題提出ページから課題番号"Test"の提出ボタンをクリックし，アップロード画面に移ります．
+"パス"の下のボタンから何でも良いのでExcelファイルを選び，送信ボタンをクリックして
+Excelファイルがきちんとアップロードできるかを確認してください．
+※ アップロードができていれば，アップロード画面の"ファイル名"下のTest.xlsxから送信したファイルがダウンロードできるようになります．
+
+
+ログインやパスワードの変更，課題提出のテストについて上手くいかない場合は，お手数ですがTAまでメールにて連絡お願いします．'''
   
   def SendMail(self):
     for i in range(len(self.csv_input)):
