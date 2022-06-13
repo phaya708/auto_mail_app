@@ -98,7 +98,7 @@ class Application():
         frame = tk.Frame(canvas)
 
         # Frame Widgetを Canvas Widget上に配置（）
-        canvas.create_window((0,0), window=frame, anchor=tk.NW, width=500, height=500)
+        canvas.create_window((0,0), window=frame, anchor=tk.NW, width=500, height=1200)
 
         lbl_subject = tk.Label(frame, text='件名：{}'.format(
             self.data['subject']), padx=10, pady=10, wraplength=400, anchor='w', justify='left')
@@ -115,6 +115,7 @@ class Application():
         button_send.grid(row=2, column=0, pady=20)
 
         print(output)
+        self.window_confirm.mainloop()
 
     def SendMail(self):
         self.mail.SendMail()
@@ -148,26 +149,17 @@ class AutoMail():
         self.pswd = self.csv_input['パスワード']
 
     def CreateContent(self, i):
-        return f'''{self.name[i]}さん，はじめまして．\n
-4月11日からの授業開始に伴い，課題の提出ページについての案内とセットアップについて連絡します．\n
-\n
+        with open("content.txt") as f:
+            content = f.read()
 
-・セットアップについて
-初回授業の前日までにセットアップとして以下の3つの項目を済ませておいてください．
-
-1. ログイン
-以下のIDとパスワードで各個人の課題提出ページにログインしてください．
-
-ID : 学生番号の下4桁
-PW: {self.pswd[i]}
-※ ログイン後は必ず，学籍番号と氏名が自分のものであるか確認してください．
-
-2.パスワードの変更
-課題提出ページの"パスワード変更"から新しいパスワードに変更してください．
-※ 初期パスワードのままにしないようにお願いします．
-
-ログインやパスワードの変更，課題提出のテストについて上手くいかない場合は，お手数ですがTAまでメールにて連絡お願いします．
-'''
+        if content.find("{name}") != -1 and content.find("{pswd}"):
+            return content.format(name = self.name[i], pswd = self.pswd[i])
+        elif content.find("{name}") != -1:
+            return content.format(name = self.name[i])
+        elif content.find("{pswd}") != -1:
+            return content.format(pswd = self.pswd[i])
+        else:
+            return content
 
     def SendMail(self):
         for i in range(len(self.csv_input)):
