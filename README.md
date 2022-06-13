@@ -1,9 +1,21 @@
 # 授業用自動メール一斉送信アプリ
 
+
+![イメージ画面](https://user-images.githubusercontent.com/91183043/173270285-6fa7c3e0-d950-4e6f-b6aa-f2b64190a343.png)
+
+## 環境
+
+### 使用言語
+Python
+
 ## 実行方法
 ```
 python main.py
 ```
+
+## 機能
+* CSVファイルの参照
+* 送信完了状態の表示
 
 
 ## CSVファイルの形式
